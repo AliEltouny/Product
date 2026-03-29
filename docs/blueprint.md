@@ -1,0 +1,19 @@
+# **App Name**: Fizzyo Flow
+
+## Core Features:
+
+- Scroll-Controlled Parallax Hero: Implement a full-screen hero section where a WebP image sequence plays forward/backward based on user scroll position, creating a cinematic parallax effect. This feature dynamically loads the correct WebP sequence for the active drink variant.
+- Dynamic Variant Display: Dynamically update overlay text (drink name, subtitle, description), theme colors, and the background WebP sequence based on the currently selected drink variant, incorporating smooth fade-out and fade-in animations for a premium feel.
+- Variant Navigation Controls: Provide a vertical navigation strip on the right side of the hero section with 'PREV' and 'NEXT' labels and arrows, allowing users to effortlessly switch between different drink variants. Includes a large index number (01, 02, etc.) for the active variant.
+- Multi-Variant Data Handling: Structure and manage an array of drink variants, each containing its name, subtitle, description, unique theme color, and a path or list of URLs for its corresponding WebP frame sequence, enabling easy content updates.
+- Adaptive Loading Experience: Display a full-screen loading overlay with brand logo and a horizontal progress bar during initial page load to prefetch WebP sequences, and show smaller loading indicators near variant controls when switching between drinks.
+- Global Navigation & Content Sections: Develop a sticky top navigation bar with brand logo and smooth-scrolling links to dedicated sections (Product, Ingredients, Nutrition, Reviews, FAQ, Contact), a footer with brand and legal links, and standard content sections to display drink information below the hero.
+- AI-Powered Product Copy Tool: Integrate an internal AI tool to suggest and refine compelling product descriptions for new drink variants, ensuring consistent brand voice and appealing language, designed for content creators to enhance product data.
+
+## Style Guidelines:
+
+- Dark Mode Default: The primary interactive color, representing brand energy and general UI elements, will be a vibrant electric purple (#5226D9). The background will be a near-black charcoal with a subtle hint of this purple (#0D0B0F). A secondary, softer blue accent (#A1C7ED) will be used for subtle highlights and inactive states. Text will be white or light gray against the dark background. Variant-specific theme colors (e.g., for Cherry, Grape, Orange) will be dynamically applied to CTAs and active indicators, standing out vividly.
+- Headlines and prominent text elements, such as the drink name and section titles, will utilize 'Space Grotesk' (sans-serif) for its modern, bold, and slightly technical aesthetic. Body text, descriptions, and smaller UI labels will use 'Inter' (sans-serif) to ensure excellent readability and a neutral, objective feel.
+- All icons, especially social media icons in the hero and footer, will adhere to a minimal and monochrome style. This ensures they blend seamlessly into the dark, cinematic aesthetic without distracting from the primary visual content.
+- The full-screen hero features a large, left-aligned text block and CTA buttons, a visually clean center, a right-aligned vertical variant navigation, and bottom-center monochrome social icons. The sticky top navigation ensures brand visibility and access to core sections. Content sections below the hero will feature clean, structured layouts appropriate for a premium product.
+- WebP sequences are directly mapped to scroll for smooth, cinematic playback. Text updates during variant changes will feature elegant fade-out/fade-in transitions. A horizontal loading bar will animate during initial asset preloading, and smaller indicators will provide feedback during variant switches, maintaining a responsive and engaging user experience.
