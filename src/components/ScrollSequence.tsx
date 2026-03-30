@@ -24,8 +24,8 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       for (let i = 1; i <= variant.frameCount; i++) {
         const img = new Image();
         const frameStr = i.toString().padStart(4, '0');
-        // Updated extension from .webp to .png
-        img.src = `${variant.basePath}${frameStr}.png`;
+        // Using .webp extension for animation frames
+        img.src = `${variant.basePath}${frameStr}.webp`;
         
         img.onload = () => {
           count++;
@@ -42,7 +42,7 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
     };
 
     loadAllImages();
-  }, [variant]);
+  }, [variant, onImageLoadProgress]);
 
   // Scroll handler
   useEffect(() => {
