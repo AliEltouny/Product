@@ -73,8 +73,8 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
 
       const dpr = window.devicePixelRatio || 1;
       
-      // Fill background with the exact Fizzyo Charcoal color to match the asset's edges
-      ctx.fillStyle = '#0D0B0F';
+      // Fill background with pure black to match the asset's edges
+      ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Scale to 70% of the screen height for sharpness
@@ -123,7 +123,7 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
         top: 0,
         left: 0,
         zIndex: 0,
-        backgroundColor: '#0D0B0F'
+        backgroundColor: '#000000'
       }}
     />
   );

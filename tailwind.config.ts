@@ -49,7 +49,7 @@ export default {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         fizzyo: {
-          charcoal: '#0D0B0F',
+          charcoal: '#000000',
           purple: '#5226D9',
           blue: '#A1C7ED',
         }
