@@ -278,4 +278,30 @@ export async function hasExistingRatingForOrder(orderNumber: string) {
   }
 }
 
+export async function listRatingsFromDb(limit = 3): Promise<RatingRecord[]> {
+  try {
+    const snapshot = await db.collection('ratings').orderBy('createdAt', 'desc').limit(limit).get();
+
+    const ratings: RatingRecord[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      ratings.push({
+        id: doc.id,
+        orderNumber: data.orderNumber,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        rating: data.rating,
+        comment: data.comment,
+        createdAt: data.createdAt,
+      });
+    });
+
+    return ratings;
+  } catch (error) {
+    console.error('Error listing ratings:', error);
+    return [];
+  }
+}
+
 
