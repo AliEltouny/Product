@@ -27,11 +27,12 @@
   }
 
   .dark {
-    --background: 280 18% 5%;
+    /* Exact Fizzyo Charcoal #0D0B0F in HSL */
+    --background: 270 15% 5%;
     --foreground: 0 0% 98%;
-    --card: 280 18% 5%;
+    --card: 270 15% 5%;
     --card-foreground: 0 0% 98%;
-    --popover: 280 18% 5%;
+    --popover: 270 15% 5%;
     --popover-foreground: 0 0% 98%;
     --primary: 255 70% 50%;
     --primary-foreground: 0 0% 98%;
@@ -64,6 +65,7 @@
 .parallax-container {
   height: 200vh;
   position: relative;
+  background-color: #0D0B0F;
 }
 
 .sequence-canvas {
@@ -74,6 +76,7 @@
   height: 100vh;
   object-fit: cover;
   z-index: 0;
+  background-color: #0D0B0F;
 }
 
 .no-scrollbar::-webkit-scrollbar {

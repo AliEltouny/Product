@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
@@ -50,8 +49,6 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // Calculate progress based on scroll position
-      // We use 1.5x window height for the sequence duration to make it feel smoother
       const progress = Math.min(Math.max(scrollY / (windowHeight * 1.2), 0), 1);
       const index = Math.floor(progress * (variant.frameCount - 1));
       
@@ -76,12 +73,11 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
 
       const dpr = window.devicePixelRatio || 1;
       
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Fill background with the exact Fizzyo Charcoal color to match the asset's edges
+      ctx.fillStyle = '#0D0B0F';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // "Smaller" scaling logic: 
-      // Instead of filling the screen (cover), we scale the image to 70% of the height
-      // This makes the asset look sharper as it isn't being stretched as much.
+      // Scale to 70% of the screen height for sharpness
       const targetHeight = canvas.height * 0.7;
       const scale = targetHeight / (img.height * dpr);
       
@@ -126,7 +122,8 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
         position: 'fixed',
         top: 0,
         left: 0,
-        zIndex: 0
+        zIndex: 0,
+        backgroundColor: '#0D0B0F'
       }}
     />
   );
