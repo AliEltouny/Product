@@ -49,6 +49,7 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       
+      // Calculate progress based on 1.2x viewport height to control scroll speed
       const progress = Math.min(Math.max(scrollY / (windowHeight * 1.2), 0), 1);
       const index = Math.floor(progress * (variant.frameCount - 1));
       
@@ -77,8 +78,8 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Scale to 70% of the screen height for sharpness
-      const targetHeight = canvas.height * 0.7;
+      // Scale to 100% of the screen height so it doesn't look cut off
+      const targetHeight = canvas.height; 
       const scale = targetHeight / (img.height * dpr);
       
       const drawWidth = img.width * dpr * scale;
