@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useRef, useEffect, useState, useMemo } from 'react';
@@ -24,7 +25,6 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       for (let i = 1; i <= variant.frameCount; i++) {
         const img = new Image();
         const frameStr = i.toString().padStart(4, '0');
-        // Using .webp extension for animation frames
         img.src = `${variant.basePath}${frameStr}.webp`;
         
         img.onload = () => {
@@ -50,7 +50,9 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      const progress = Math.min(Math.max(scrollY / windowHeight, 0), 1);
+      // Calculate progress based on scroll position
+      // We use 1.5x window height for the sequence duration to make it feel smoother
+      const progress = Math.min(Math.max(scrollY / (windowHeight * 1.2), 0), 1);
       const index = Math.floor(progress * (variant.frameCount - 1));
       
       setCurrentIndex(index);
@@ -72,23 +74,41 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       const img = images[currentIndex];
       if (!img) return;
 
-      const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-      const x = (canvas.width / 2) - (img.width / 2) * scale;
-      const y = (canvas.height / 2) - (img.height / 2) * scale;
+      const dpr = window.devicePixelRatio || 1;
       
+      // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+      // "Smaller" scaling logic: 
+      // Instead of filling the screen (cover), we scale the image to 70% of the height
+      // This makes the asset look sharper as it isn't being stretched as much.
+      const targetHeight = canvas.height * 0.7;
+      const scale = targetHeight / (img.height * dpr);
+      
+      const drawWidth = img.width * dpr * scale;
+      const drawHeight = img.height * dpr * scale;
+      
+      const x = (canvas.width - drawWidth) / 2;
+      const y = (canvas.height - drawHeight) / 2;
+      
+      ctx.drawImage(img, x, y, drawWidth, drawHeight);
     };
 
     render();
   }, [currentIndex, isLoaded, images]);
 
-  // Resize canvas
+  // Resize canvas with DPI support
   useEffect(() => {
     const resize = () => {
       if (canvasRef.current) {
-        canvasRef.current.width = window.innerWidth;
-        canvasRef.current.height = window.innerHeight;
+        const dpr = window.devicePixelRatio || 1;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        canvasRef.current.width = width * dpr;
+        canvasRef.current.height = height * dpr;
+        canvasRef.current.style.width = `${width}px`;
+        canvasRef.current.style.height = `${height}px`;
       }
     };
     window.addEventListener('resize', resize);
@@ -102,7 +122,11 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       className="sequence-canvas pointer-events-none"
       style={{
         transition: 'opacity 0.8s ease-in-out',
-        opacity: isLoaded ? 1 : 0
+        opacity: isLoaded ? 1 : 0,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 0
       }}
     />
   );
