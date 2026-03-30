@@ -24,7 +24,8 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
       for (let i = 1; i <= variant.frameCount; i++) {
         const img = new Image();
         const frameStr = i.toString().padStart(4, '0');
-        img.src = `${variant.basePath}${frameStr}.webp`;
+        // Updated extension from .webp to .png
+        img.src = `${variant.basePath}${frameStr}.png`;
         
         img.onload = () => {
           count++;
@@ -48,7 +49,6 @@ export function ScrollSequence({ variant, onImageLoadProgress }: ScrollSequenceP
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-      const containerHeight = windowHeight * 2; // Fixed height of parallax container
       
       const progress = Math.min(Math.max(scrollY / windowHeight, 0), 1);
       const index = Math.floor(progress * (variant.frameCount - 1));
