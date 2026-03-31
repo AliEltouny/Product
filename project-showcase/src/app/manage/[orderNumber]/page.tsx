@@ -20,6 +20,9 @@ export default function ManageOrderPage({ params }: OrderPageParams) {
   const [orderNumber, setOrderNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [isCanceling, setIsCanceling] = useState(false);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
 
   React.useEffect(() => {
     params.then((p) => setOrderNumber(p.orderNumber));
@@ -49,6 +52,35 @@ export default function ManageOrderPage({ params }: OrderPageParams) {
       }
     },
     [orderNumber]
+  );
+
+  const cancelOrder = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsCanceling(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/orders/${orderNumber}/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reason: cancelReason }),
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || 'Failed to cancel order.');
+        }
+
+        setCancelSuccess(true);
+        setCancelReason('');
+        setTimeout(() => setCancelSuccess(false), 5000);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to cancel order.');
+      } finally {
+        setIsCanceling(false);
+      }
+    },
+    [orderNumber, cancelReason]
   );
 
   return (
@@ -83,7 +115,34 @@ export default function ManageOrderPage({ params }: OrderPageParams) {
             ))}
           </div>
 
-          <Button asChild variant="ghost" className="w-full rounded-full border border-white/20 hover:bg-white/10 text-white px-6 py-5 uppercase text-xs font-bold tracking-widest">
+          <div className="border-t border-white/10 pt-8 mt-8">
+            <h2 className="text-xl font-bold uppercase tracking-tight mb-4">Cancel Order</h2>
+            {cancelSuccess ? (
+              <div className="rounded-xl border border-green-300/30 bg-green-500/20 px-4 py-3 text-green-100 mb-6">
+                Order cancellation request submitted. Customer will receive confirmation email.
+              </div>
+            ) : (
+              <form onSubmit={cancelOrder} className="space-y-3">
+                <textarea
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  placeholder="Enter cancellation reason..."
+                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-white placeholder-white/40 text-sm focus:outline-none focus:border-fizzyo-purple focus:bg-white/10"
+                  rows={3}
+                  required
+                />
+                <Button
+                  type="submit"
+                  disabled={isCanceling || !cancelReason.trim()}
+                  className="w-full rounded-full bg-red-600 hover:bg-red-700 text-white px-6 py-5 uppercase text-xs font-bold tracking-widest disabled:opacity-70"
+                >
+                  {isCanceling ? 'Canceling...' : 'Cancel Order'}
+                </Button>
+              </form>
+            )}
+          </div>
+
+          <Button asChild variant="ghost" className="w-full rounded-full border border-white/20 hover:bg-white/10 text-white px-6 py-5 uppercase text-xs font-bold tracking-widest mt-8">
             <Link href="/shop">Back to Shop</Link>
           </Button>
         </div>

@@ -304,4 +304,51 @@ export async function listRatingsFromDb(limit = 3): Promise<RatingRecord[]> {
   }
 }
 
+export async function createIssueInDb(
+  orderNumber: string,
+  type: 'cancellation' | 'not_received' | 'complaint',
+  description: string
+) {
+  try {
+    const docRef = await db
+      .collection('orders')
+      .doc(orderNumber)
+      .collection('issues')
+      .add({
+        type,
+        description,
+        status: 'pending',
+        createdAt: Date.now(),
+      });
+
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating issue:', error);
+    throw error;
+  }
+}
+
+export async function getOrderIssuesFromDb(orderNumber: string) {
+  try {
+    const snapshot = await db
+      .collection('orders')
+      .doc(orderNumber)
+      .collection('issues')
+      .get();
+
+    const issues: any[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      issues.push({
+        id: doc.id,
+        ...data,
+      });
+    });
+
+    return issues;
+  } catch (error) {
+    console.error('Error getting order issues:', error);
+    return [];
+  }
+}
 

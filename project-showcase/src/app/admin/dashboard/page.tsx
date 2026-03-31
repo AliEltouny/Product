@@ -27,12 +27,22 @@ type Review = {
   createdAt: number;
 };
 
+type Issue = {
+  id: string;
+  orderNumber: string;
+  type: string;
+  description: string;
+  status: string;
+  createdAt: number;
+};
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [activeTab, setActiveTab] = useState<'orders' | 'reviews'>('orders');
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [activeTab, setActiveTab] = useState<'orders' | 'reviews' | 'issues'>('orders');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -51,24 +61,29 @@ export default function AdminDashboardPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const [ordersRes, reviewsRes] = await Promise.all([
+      const [ordersRes, reviewsRes, issuesRes] = await Promise.all([
         fetch('/api/admin/orders', {
           headers: { Authorization: `Bearer ${authToken}` },
         }),
         fetch('/api/admin/reviews', {
           headers: { Authorization: `Bearer ${authToken}` },
         }),
+        fetch('/api/admin/issues', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }),
       ]);
 
-      if (!ordersRes.ok || !reviewsRes.ok) {
+      if (!ordersRes.ok || !reviewsRes.ok || !issuesRes.ok) {
         throw new Error('Failed to fetch data');
       }
 
       const ordersData = await ordersRes.json();
       const reviewsData = await reviewsRes.json();
+      const issuesData = await issuesRes.json();
 
       setOrders(ordersData.orders || []);
       setReviews(reviewsData.ratings || []);
+      setIssues(issuesData.issues || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch data');
     } finally {
@@ -153,6 +168,16 @@ export default function AdminDashboardPage() {
             >
               Reviews ({reviews.length})
             </button>
+            <button
+              onClick={() => setActiveTab('issues')}
+              className={`px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-xs transition-all ${
+                activeTab === 'issues'
+                  ? 'bg-fizzyo-purple text-white'
+                  : 'bg-white/10 text-white/60 hover:text-white'
+              }`}
+            >
+              Issues ({issues.length})
+            </button>
           </div>
 
           {isLoading ? (
@@ -211,7 +236,7 @@ export default function AdminDashboardPage() {
                 ))
               )}
             </div>
-          ) : (
+          ) : activeTab === 'reviews' ? (
             <div className="space-y-4">
               {reviews.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
@@ -250,6 +275,51 @@ export default function AdminDashboardPage() {
                     <p className="text-white/80 mb-4">{review.comment}</p>
                     <p className="text-xs text-white/40">
                       {new Date(review.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {issues.length === 0 ? (
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
+                  <p className="text-white/60">No issues reported.</p>
+                </div>
+              ) : (
+                issues.map((issue) => (
+                  <div
+                    key={issue.id}
+                    className="rounded-2xl border border-white/10 bg-white/5 p-6"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold">Order {issue.orderNumber}</h3>
+                        <span
+                          className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mt-2 ${
+                            issue.type === 'cancellation'
+                              ? 'bg-red-500/20 text-red-200'
+                              : issue.type === 'not_received'
+                              ? 'bg-orange-500/20 text-orange-200'
+                              : 'bg-gray-500/20 text-gray-200'
+                          }`}
+                        >
+                          {issue.type === 'cancellation' ? 'Cancellation' : issue.type === 'not_received' ? 'Not Received' : issue.type}
+                        </span>
+                        <span
+                          className={`inline-block ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mt-2 ${
+                            issue.status === 'pending'
+                              ? 'bg-yellow-500/20 text-yellow-200'
+                              : 'bg-green-500/20 text-green-200'
+                          }`}
+                        >
+                          {issue.status}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-white/80 mb-4">{issue.description}</p>
+                    <p className="text-xs text-white/40">
+                      Reported: {new Date(issue.createdAt).toLocaleString()}
                     </p>
                   </div>
                 ))
