@@ -22,7 +22,7 @@ import {
 
 export function Navbar() {
   const pathname = usePathname();
-  const isOnShopPage = pathname === '/shop';
+  const isCheckoutPage = pathname === '/shop' || pathname.startsWith('/manage/') || pathname.startsWith('/track/');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -80,7 +80,7 @@ export function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-8">
-          {!isOnShopPage && navLinks.map((link) => (
+          {!isCheckoutPage && navLinks.map((link) => (
             <a 
               key={link.name} 
               href={link.href}
@@ -155,7 +155,7 @@ export function Navbar() {
                     ))}
                   </div>
                   <DropdownMenuSeparator />
-                  {!isOnShopPage && (
+                  {!isCheckoutPage && (
                     <Button asChild className="w-full rounded-lg bg-fizzyo-purple hover:bg-fizzyo-purple/90 text-white py-2 uppercase text-xs font-bold tracking-widest">
                       <Link href="/shop">Proceed to Checkout</Link>
                     </Button>
@@ -165,7 +165,7 @@ export function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {!isOnShopPage && (
+          {!isCheckoutPage && (
             <Button asChild className="hidden sm:flex rounded-full px-6 py-6 bg-fizzyo-purple hover:bg-fizzyo-purple/90 text-white border-none uppercase text-xs font-bold tracking-widest">
               <Link href="/shop">Buy Now</Link>
             </Button>
