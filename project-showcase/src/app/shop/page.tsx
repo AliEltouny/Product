@@ -227,7 +227,7 @@ export default function ShopPage() {
               {items.map((item) => (
                 <article
                   key={item.id}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 pr-24 flex items-center gap-5 transition-[margin-right] duration-300 hover:mr-[72px]"
+                  className="group relative overflow-visible rounded-2xl border border-white/10 bg-white/5 p-5 pr-10 flex items-center gap-5"
                 >
                   <img
                     src={productImages[item.id]}
@@ -239,17 +239,17 @@ export default function ShopPage() {
                     <p className="text-white/60 uppercase tracking-widest text-xs">{item.subtitle}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-white/50 absolute right-8 top-1/2 -translate-y-1/2 transition-[right] duration-300 group-hover:right-20">x{item.qty}</p>
+                    <p className="text-sm text-white/50 absolute right-8 top-1/2 -translate-y-1/2">x{item.qty}</p>
                     <p className="text-lg font-bold">${(item.qty * PRICE_PER_ITEM).toFixed(2)}</p>
                     <p className="text-xs text-white/50">${PRICE_PER_ITEM.toFixed(2)} each</p>
                   </div>
 
-                  <div className="absolute inset-y-0 right-0 flex w-[72px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
+                  <div className="absolute inset-y-0 -right-[72px] flex w-[72px] translate-x-2 opacity-0 pointer-events-none transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-hover:pointer-events-auto">
                     <button
                       type="button"
                       aria-label={`Decrease ${item.name}`}
                       onClick={() => decrementCartItem(item.id)}
-                      className="flex-1 bg-white/5 hover:bg-white/10 flex items-center justify-center"
+                      className="flex-1 rounded-l-none bg-white/10 hover:bg-white/15 flex items-center justify-center"
                     >
                       <Minus className="h-4 w-4" />
                     </button>
@@ -257,7 +257,7 @@ export default function ShopPage() {
                       type="button"
                       aria-label={`Remove ${item.name}`}
                       onClick={() => removeCartItem(item.id)}
-                      className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-200 flex items-center justify-center"
+                      className="flex-1 rounded-r-2xl bg-red-500/20 hover:bg-red-500/30 text-red-200 flex items-center justify-center"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
