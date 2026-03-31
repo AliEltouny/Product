@@ -178,7 +178,7 @@ export default function AdminDashboardPage() {
                         <p className="text-sm text-white/60">{order.customerPhone}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-bold">${order.subtotal.toFixed(2)}</p>
+                        <p className="text-2xl font-bold">${Number(order.subtotal || 0).toFixed(2)}</p>
                         <span
                           className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mt-2 ${
                             order.status === 'delivered'
@@ -197,7 +197,7 @@ export default function AdminDashboardPage() {
                     <div>
                       <p className="text-xs text-white/50 mb-2">Items:</p>
                       <ul className="text-sm text-white/70 space-y-1">
-                        {order.items.map((item) => (
+                        {(Array.isArray(order.items) ? order.items : []).map((item) => (
                           <li key={item.id}>
                             {item.name} {item.subtitle} x{item.qty}
                           </li>

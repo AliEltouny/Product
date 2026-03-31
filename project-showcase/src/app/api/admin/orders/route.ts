@@ -38,10 +38,19 @@ export async function GET(request: Request) {
     }
 
     const ordersSnapshot = await db.collection('orders').get();
-    const orders = ordersSnapshot.docs.map((doc) => ({
-      ...doc.data(),
-      orderNumber: doc.id,
-    }));
+    const orders = await Promise.all(
+      ordersSnapshot.docs.map(async (doc) => {
+        const orderData = doc.data();
+        const itemsSnapshot = await db.collection('orders').doc(doc.id).collection('items').get();
+        const items = itemsSnapshot.docs.map((itemDoc) => itemDoc.data());
+
+        return {
+          ...orderData,
+          orderNumber: doc.id,
+          items,
+        };
+      })
+    );
 
     return NextResponse.json({ orders });
   } catch (error) {
