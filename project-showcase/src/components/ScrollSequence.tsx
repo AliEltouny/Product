@@ -94,7 +94,7 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
 
   return (
     <div
-      className="fixed inset-0 z-0 pointer-events-none flex items-center justify-center"
+      className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center"
       style={{ transition: 'opacity 0.8s ease-in-out', opacity: isLoaded ? 1 : 0 }}
     >
       <div

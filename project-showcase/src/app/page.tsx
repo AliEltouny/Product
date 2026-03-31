@@ -48,15 +48,15 @@ export default function Home() {
       {isInitiallyLoaded && <Navbar />}
 
       <div className="parallax-container">
-        <ScrollSequence 
-          variant={currentVariant} 
-          onImageLoadProgress={handleProgress}
-          onVideoEnd={handleNext}
-        />
-        
-        <div className="fixed inset-0 z-[5] pointer-events-none bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(13,11,15,0.4)_100%)]" />
-
         <div className="sticky top-0 h-screen overflow-hidden">
+          <ScrollSequence 
+            variant={currentVariant} 
+            onImageLoadProgress={handleProgress}
+            onVideoEnd={handleNext}
+          />
+
+          <div className="absolute inset-0 z-[5] pointer-events-none bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(13,11,15,0.4)_100%)]" />
+
           <HeroOverlay 
             variant={currentVariant} 
             index={currentVariantIndex + 1}
