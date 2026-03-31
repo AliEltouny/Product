@@ -15,7 +15,7 @@ export async function POST(
 ) {
   try {
     const orderNumber = params.orderNumber;
-    const { reason } = await request.json();
+    const { reason, fromAdmin } = await request.json();
 
     if (!orderNumber) {
       return NextResponse.json(
@@ -40,7 +40,13 @@ export async function POST(
       type: 'cancellation',
       reason,
       createdAt: Date.now(),
-      status: 'pending',
+      status: fromAdmin ? 'admin-initiated' : 'pending',
+    });
+
+    // Update order status to cancelled
+    await db.collection('orders').doc(orderNumber).update({
+      status: 'cancelled',
+      statusUpdatedAt: Date.now(),
     });
 
     // Send email notification
@@ -56,36 +62,36 @@ export async function POST(
         },
       });
 
-      // Email to customer
-      await transporter.sendMail({
-        from: `Fizzyo Orders <${ORDER_FROM_EMAIL}>`,
-        to: orderData?.customerEmail,
-        subject: `Order Cancellation Request: ${orderNumber}`,
-        text: `Your order ${orderNumber} cancellation request has been received. Reason: ${reason}\n\nWe will process this within 1-2 business days.`,
-        html: `
-          <div style="font-family: Arial, sans-serif; line-height: 1.55; color: #111;">
-            <h2>Order Cancellation Request Received</h2>
-            <p><strong>Order Number:</strong> ${orderNumber}</p>
-            <p><strong>Reason:</strong> ${reason}</p>
-            <p>We will process your cancellation request within 1-2 business days. If you have any questions, please contact us.</p>
-          </div>
-        `,
-      });
+      // Email to customer only if not from admin
+      if (!fromAdmin) {
+        await transporter.sendMail({
+          from: `Fizzyo Orders <${ORDER_FROM_EMAIL}>`,
+          to: orderData?.customerEmail,
+          subject: `Order Cancellation Request: ${orderNumber}`,
+          text: `Your order ${orderNumber} cancellation request has been received. We will process this within 1-2 business days.`,
+          html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.55; color: #111;">
+              <h2>Order Cancellation Request Received</h2>
+              <p><strong>Order Number:</strong> ${orderNumber}</p>
+              <p>We will process your cancellation request within 1-2 business days. If you have any questions, please contact us.</p>
+            </div>
+          `,
+        });
+      }
 
-      // Email to admin
-      if (CONTACT_TO_EMAIL) {
+      // Email to admin only if customer initiated
+      if (!fromAdmin && CONTACT_TO_EMAIL) {
         await transporter.sendMail({
           from: `Fizzyo Orders <${ORDER_FROM_EMAIL}>`,
           to: CONTACT_TO_EMAIL,
           subject: `Order Cancellation Request: ${orderNumber}`,
-          text: `Customer has requested to cancel order ${orderNumber}.\nReason: ${reason}\nCustomer Email: ${orderData?.customerEmail}`,
+          text: `Customer has requested to cancel order ${orderNumber}.\nCustomer Email: ${orderData?.customerEmail}`,
           html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.55; color: #111;">
               <h2>Order Cancellation Request</h2>
               <p><strong>Order Number:</strong> ${orderNumber}</p>
               <p><strong>Customer Email:</strong> ${orderData?.customerEmail}</p>
               <p><strong>Customer Phone:</strong> ${orderData?.customerPhone}</p>
-              <p><strong>Reason:</strong> ${reason}</p>
             </div>
           `,
         });

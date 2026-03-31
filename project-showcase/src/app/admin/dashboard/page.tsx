@@ -46,6 +46,7 @@ export default function AdminDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [updatingIssueId, setUpdatingIssueId] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('adminToken');
@@ -111,6 +112,37 @@ export default function AdminDashboardPage() {
       setError(err instanceof Error ? err.message : 'Failed to delete review');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleConfirmIssue = async (issueId: string, orderNumber: string, action: 'confirm' | 'deny') => {
+    if (!token) return;
+
+    setUpdatingIssueId(issueId);
+    try {
+      const response = await fetch(`/api/admin/issues/${issueId}`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ action, orderNumber }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${action} issue`);
+      }
+
+      // Update issue status locally
+      setIssues((prev) =>
+        prev.map((issue) =>
+          issue.id === issueId ? { ...issue, status: action === 'confirm' ? 'confirmed' : 'denied' } : issue
+        )
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : `Failed to ${action} issue`);
+    } finally {
+      setUpdatingIssueId(null);
     }
   };
 
@@ -212,6 +244,8 @@ export default function AdminDashboardPage() {
                               ? 'bg-blue-500/20 text-blue-200'
                               : order.status === 'prep'
                               ? 'bg-yellow-500/20 text-yellow-200'
+                              : order.status === 'cancelled'
+                              ? 'bg-red-500/20 text-red-200'
                               : 'bg-gray-500/20 text-gray-200'
                           }`}
                         >
@@ -308,9 +342,11 @@ export default function AdminDashboardPage() {
                         </span>
                         <span
                           className={`inline-block ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mt-2 ${
-                            issue.status === 'pending'
+                            issue.status === 'pending' || issue.status === 'admin-initiated'
                               ? 'bg-yellow-500/20 text-yellow-200'
-                              : 'bg-green-500/20 text-green-200'
+                              : issue.status === 'confirmed'
+                              ? 'bg-green-500/20 text-green-200'
+                              : 'bg-gray-500/20 text-gray-200'
                           }`}
                         >
                           {issue.status}
@@ -318,6 +354,24 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <p className="text-white/80 mb-4">{issue.description}</p>
+                    {(issue.status === 'pending' || issue.status === 'admin-initiated') && (
+                      <div className="flex gap-2 mb-4">
+                        <button
+                          onClick={() => handleConfirmIssue(issue.id, issue.orderNumber, 'confirm')}
+                          disabled={updatingIssueId === issue.id}
+                          className="flex-1 rounded-lg bg-green-600 hover:bg-green-700 text-white px-3 py-2 text-xs font-bold uppercase tracking-widest disabled:opacity-70"
+                        >
+                          {updatingIssueId === issue.id ? 'Updating...' : 'Confirm'}
+                        </button>
+                        <button
+                          onClick={() => handleConfirmIssue(issue.id, issue.orderNumber, 'deny')}
+                          disabled={updatingIssueId === issue.id}
+                          className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 text-white px-3 py-2 text-xs font-bold uppercase tracking-widest disabled:opacity-70"
+                        >
+                          {updatingIssueId === issue.id ? 'Updating...' : 'Deny'}
+                        </button>
+                      </div>
+                    )}
                     <p className="text-xs text-white/40">
                       Reported: {new Date(issue.createdAt).toLocaleString()}
                     </p>

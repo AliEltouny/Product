@@ -63,7 +63,7 @@ export default function ManageOrderPage({ params }: OrderPageParams) {
         const response = await fetch(`/api/orders/${orderNumber}/cancel`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reason: cancelReason }),
+          body: JSON.stringify({ reason: cancelReason, fromAdmin: true }),
         });
         const data = await response.json();
 

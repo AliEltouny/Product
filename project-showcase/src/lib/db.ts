@@ -1,6 +1,6 @@
 import { db } from './firebase';
 
-export type OrderStatus = 'pending' | 'prep' | 'out-for-delivery' | 'delivered';
+export type OrderStatus = 'pending' | 'prep' | 'out-for-delivery' | 'delivered' | 'cancelled';
 
 export type CheckoutItemRecord = {
   id: number;

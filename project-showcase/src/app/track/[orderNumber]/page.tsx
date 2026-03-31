@@ -192,6 +192,8 @@ export default function TrackOrderPage({ params }: TrackOrderPageProps) {
 
               {statusError ? (
                 <p className="text-white/70 mb-8">{statusError}</p>
+              ) : currentStatus === 'cancelled' ? (
+                <p className="text-red-200 mb-8 rounded-lg bg-red-500/20 border border-red-300/30 p-3">This order has been cancelled. If you have any questions, please contact us.</p>
               ) : (
                 <p className="text-white/70 mb-8">
                   Your order is {STATUSES[currentStatusIndex]?.label.toLowerCase()}. You will receive email updates as it progresses.
@@ -298,7 +300,7 @@ export default function TrackOrderPage({ params }: TrackOrderPageProps) {
                 </div>
               )}
 
-              {currentStatus !== 'delivered' && (
+              {currentStatus !== 'delivered' && currentStatus !== 'cancelled' && (
                 <div className="mb-8 rounded-xl border border-white/10 bg-black/30 p-4">
                   <div id="cancel-order" />
                   {cancelSuccess && (
