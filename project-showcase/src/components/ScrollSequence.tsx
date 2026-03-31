@@ -15,6 +15,19 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
   const [duration, setDuration] = useState(0);
   const [videoAspect, setVideoAspect] = useState(16 / 9);
   const [frameSize, setFrameSize] = useState({ width: 1200, height: 675 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+    return () => window.removeEventListener('resize', updateViewport);
+  }, []);
+
+  const activeVideoUrl = isMobile ? variant.mobileVideoUrl : variant.videoUrl;
 
   useEffect(() => {
     const updateFrameSize = () => {
@@ -25,9 +38,10 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
       let width: number, finalHeight: number;
 
       if (isMobile) {
-        // Mobile: 1:1 square ratio, fill viewport completely
-        width = viewportWidth;
-        finalHeight = height;
+        // Mobile: 1:1 square ratio, zoomed to fill viewport
+        const size = Math.min(viewportWidth, height) * 1.2;
+        width = size;
+        finalHeight = size;
       } else {
         // Desktop: full width, height proportional to video aspect ratio
         width = viewportWidth;
@@ -54,7 +68,7 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
     video.pause();
     video.currentTime = 0;
     video.load();
-  }, [variant, onImageLoadProgress]);
+  }, [variant, activeVideoUrl, onImageLoadProgress]);
 
   // Autoplay once for the active product; parent handles transition on end.
   useEffect(() => {
@@ -115,10 +129,9 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
       >
         <video
           ref={videoRef}
-          key={variant.id}
-          src={variant.videoUrl}
+          key={`${variant.id}-${isMobile ? 'mobile' : 'desktop'}`}
+          src={activeVideoUrl}
           className="h-full w-full"
-          style={{ objectFit: 'cover' }}
           muted
           playsInline
           preload="auto"
