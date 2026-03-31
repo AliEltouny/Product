@@ -16,7 +16,7 @@ export const DRINK_VARIANTS: DrinkVariant[] = [
     description: "A modern take on a classic soda with a perfect blend of sweet and tart, full of nostalgic flavor.",
     themeColor: "#FF1F44",
     accentColor: "#9e132b",
-    videoUrl: "https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/cherry%201.mp4"
+    videoUrl: "https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/cherry.mp4"
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ export const DRINK_VARIANTS: DrinkVariant[] = [
     description: "A functional soda brand inspired by classic flavors but made with better ingredients and real fruit juices.",
     themeColor: "#5226D9",
     accentColor: "#3a1a9e",
-    videoUrl: "https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/grapes%201.mp4"
+    videoUrl: "https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/grapes.mp4"
   },
   {
     id: 3,
@@ -34,6 +34,6 @@ export const DRINK_VARIANTS: DrinkVariant[] = [
     description: "Bright and refreshing citrus soda with natural lemon spark and crisp bubbles for that perfect zest.",
     themeColor: "#FF8C00",
     accentColor: "#cc7000",
-    videoUrl: "https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/orange%201.mp4"
+    videoUrl: "https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/orange.mp4"
   }
 ];
