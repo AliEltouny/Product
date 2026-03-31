@@ -229,23 +229,23 @@ export default function ShopPage() {
                   key={item.id}
                   className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5"
                 >
-                  <div className="flex items-center gap-5 pr-20 transition-[margin-right] duration-300 group-hover:mr-[72px]">
+                  <div className="flex items-center gap-3 sm:gap-5 pr-16 sm:pr-20 transition-[margin-right] duration-300 group-hover:mr-4 sm:group-hover:mr-[72px]">
                     <img
                       src={productImages[item.id]}
                       alt={`${item.name} ${item.subtitle}`}
                       className="h-24 w-24 object-contain rounded-lg bg-black/40"
                     />
                     <div className="flex-1 min-w-0">
-                      <h2 className="text-2xl font-headline font-bold uppercase tracking-tight">{item.name}</h2>
+                      <h2 className="text-xl sm:text-2xl font-headline font-bold uppercase tracking-tight truncate">{item.name}</h2>
                       <p className="text-white/60 uppercase tracking-widest text-xs">{item.subtitle}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-lg font-bold">${(item.qty * PRICE_PER_ITEM).toFixed(2)}</p>
+                      <p className="text-base sm:text-lg font-bold">${(item.qty * PRICE_PER_ITEM).toFixed(2)}</p>
                       <p className="text-xs text-white/50">${PRICE_PER_ITEM.toFixed(2)} each</p>
                     </div>
                   </div>
 
-                  <p className="text-sm text-white/50 absolute right-8 top-1/2 -translate-y-1/2 transition-[right] duration-300 group-hover:right-20">x{item.qty}</p>
+                  <p className="text-sm text-white/50 absolute right-8 top-1/2 -translate-y-1/2 transition-[right] duration-300 group-hover:right-10 sm:group-hover:right-20">x{item.qty}</p>
 
                   <div className="absolute inset-y-0 right-0 flex w-[72px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
                     <button
