@@ -98,7 +98,7 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
       style={{ transition: 'opacity 0.8s ease-in-out', opacity: isLoaded ? 1 : 0 }}
     >
       <div
-        className="relative overflow-hidden bg-black border border-white/10"
+        className="relative overflow-hidden bg-black"
         style={{ width: `${frameSize.width}px`, height: `${frameSize.height}px` }}
       >
         <video
