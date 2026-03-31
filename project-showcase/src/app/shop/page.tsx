@@ -229,7 +229,7 @@ export default function ShopPage() {
                   key={item.id}
                   className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5"
                 >
-                  <div className="flex items-center gap-3 sm:gap-5 pr-16 sm:pr-20 transition-[margin-right] duration-300 group-hover:mr-4 sm:group-hover:mr-[72px]">
+                  <div className="flex items-center gap-3 sm:gap-5 pr-20 sm:pr-20 transition-[margin-right] duration-300 group-hover:mr-4 sm:group-hover:mr-[72px]">
                     <img
                       src={productImages[item.id]}
                       alt={`${item.name} ${item.subtitle}`}
@@ -243,9 +243,9 @@ export default function ShopPage() {
                       <p className="text-base sm:text-lg font-bold">${(item.qty * PRICE_PER_ITEM).toFixed(2)}</p>
                       <p className="text-xs text-white/50">${PRICE_PER_ITEM.toFixed(2)} each</p>
                     </div>
-                  </div>
 
-                  <p className="text-sm text-white/50 absolute right-8 top-1/2 -translate-y-1/2 transition-[right] duration-300 group-hover:right-10 sm:group-hover:right-20">x{item.qty}</p>
+                    <p className="text-sm text-white/50 shrink-0">x{item.qty}</p>
+                  </div>
 
                   <div className="absolute inset-y-0 right-0 flex w-[72px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
                     <button
