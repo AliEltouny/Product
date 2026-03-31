@@ -35,6 +35,14 @@ export async function POST(
 
     const orderData = orderDoc.data();
 
+    // Check if order is already cancelled
+    if (orderData?.status === 'cancelled') {
+      return NextResponse.json(
+        { error: 'This order has already been cancelled.' },
+        { status: 400 }
+      );
+    }
+
     // Add cancellation record
     await db.collection('orders').doc(orderNumber).collection('issues').add({
       type: 'cancellation',

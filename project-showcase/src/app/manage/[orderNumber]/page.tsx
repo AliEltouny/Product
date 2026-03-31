@@ -18,6 +18,7 @@ const STATUSES = [
 
 export default function ManageOrderPage({ params }: OrderPageParams) {
   const [orderNumber, setOrderNumber] = useState('');
+  const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cancelReason, setCancelReason] = useState('');
@@ -25,8 +26,23 @@ export default function ManageOrderPage({ params }: OrderPageParams) {
   const [cancelSuccess, setCancelSuccess] = useState(false);
 
   React.useEffect(() => {
-    params.then((p) => setOrderNumber(p.orderNumber));
+    params.then((p) => {
+      setOrderNumber(p.orderNumber);
+      fetchOrderStatus(p.orderNumber);
+    });
   }, [params]);
+
+  const fetchOrderStatus = async (orderNum: string) => {
+    try {
+      const response = await fetch(`/api/orders/${orderNum}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentStatus(data.order?.status || 'pending');
+      }
+    } catch (err) {
+      console.error('Failed to fetch order status:', err);
+    }
+  };
 
   const updateStatus = useCallback(
     async (newStatus: string) => {
@@ -117,7 +133,11 @@ export default function ManageOrderPage({ params }: OrderPageParams) {
 
           <div className="border-t border-white/10 pt-8 mt-8">
             <h2 className="text-xl font-bold uppercase tracking-tight mb-4">Cancel Order</h2>
-            {cancelSuccess ? (
+            {currentStatus === 'cancelled' ? (
+              <div className="rounded-xl border border-yellow-300/30 bg-yellow-500/20 px-4 py-3 text-yellow-100">
+                This order has already been cancelled.
+              </div>
+            ) : cancelSuccess ? (
               <div className="rounded-xl border border-green-300/30 bg-green-500/20 px-4 py-3 text-green-100 mb-6">
                 Order cancellation request submitted. Customer will receive confirmation email.
               </div>
