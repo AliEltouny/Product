@@ -125,7 +125,7 @@ export function SodaCookbook() {
         Our Fizzy Recipe Book
       </h3>
 
-      <div className="relative rounded-[2rem] border-4 border-fizzyo-purple/60 bg-gradient-to-br from-[#f8eec8] to-[#f2e3ae] dark:from-[#2b1e23] dark:to-[#191116] shadow-[0_16px_40px_rgba(0,0,0,0.28)] overflow-visible px-3 py-3 md:px-4 md:py-4 aspect-[3/1] md:aspect-auto">
+      <div className="relative rounded-[2rem] border-4 border-fizzyo-purple/60 bg-gradient-to-br from-[#f8eec8] to-[#f2e3ae] dark:from-[#2b1e23] dark:to-[#191116] shadow-[0_16px_40px_rgba(0,0,0,0.28)] overflow-visible px-3 py-3 md:px-4 md:py-4 aspect-auto">
         <div className="relative px-2 py-2 md:px-3 md:py-3 overflow-visible">
           <div className="absolute inset-0 rounded-[1.45rem] border border-black/10 dark:border-white/10 pointer-events-none" />
           <div className="relative overflow-hidden rounded-[1.45rem]">
