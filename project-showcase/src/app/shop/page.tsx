@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, Minus, Plus, Trash2, X } from 'lucide-react';
+import { CheckCircle2, Minus, Trash2, X } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +15,6 @@ import {
 import {
   clearCart,
   decrementCartItem,
-  incrementCartItem,
   getCartItems,
   removeCartItem,
   type CartItem,
@@ -248,14 +247,6 @@ export default function ShopPage() {
                   <div className="absolute inset-y-0 right-0 flex w-[72px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
                     <button
                       type="button"
-                      aria-label={`Increase ${item.name}`}
-                      onClick={() => incrementCartItem(item.id)}
-                      className="flex-1 bg-green-500/20 hover:bg-green-500/30 text-green-200 flex items-center justify-center"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
                       aria-label={`Decrease ${item.name}`}
                       onClick={() => decrementCartItem(item.id)}
                       className="flex-1 bg-white/5 hover:bg-white/10 flex items-center justify-center"
@@ -286,19 +277,7 @@ export default function ShopPage() {
                 <span>${subtotal.toFixed(2)}</span>
               </div>
 
-              <div className="space-y-2">
-                <Button
-                  onClick={() => {
-                    const checkoutSection = document.querySelector('[data-checkout]');
-                    checkoutSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="w-full rounded-full bg-fizzyo-purple hover:bg-fizzyo-purple/90 text-white py-5 uppercase text-xs font-bold tracking-widest"
-                >
-                  Proceed to Checkout
-                </Button>
-              </div>
-
-              <div data-checkout className="space-y-3">
+              <div className="space-y-3">
                 <label className="text-xs uppercase tracking-[0.2em] text-white/55 block">Email</label>
                 <input
                   type="email"

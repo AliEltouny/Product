@@ -109,45 +109,53 @@ export function Navbar() {
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuContent align="end" className="w-64 p-3 space-y-3">
               <DropdownMenuLabel className="text-center">Your Cart</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {cartItems.length === 0 ? (
                 <DropdownMenuItem className="text-muted-foreground justify-center">No items yet.</DropdownMenuItem>
               ) : (
-                cartItems.map((item) => (
-                  <div key={item.id} className="group relative overflow-hidden rounded-md border border-border/40 bg-background/40">
-                    <div className="flex items-center gap-2 px-2 py-2 pr-20 transition-[margin-right] duration-300 group-hover:mr-[72px]">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                        <span className="truncate">{item.name} {item.subtitle}</span>
+                <>
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="group relative overflow-hidden rounded-md border border-border/40 bg-background/40">
+                        <div className="flex items-center gap-2 px-2 py-2 pr-20 transition-[margin-right] duration-300 group-hover:mr-[72px]">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                            <span className="truncate">{item.name} {item.subtitle}</span>
+                          </div>
+                        </div>
+
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs opacity-70 transition-[right] duration-300 group-hover:right-20">
+                          x{item.qty}
+                        </span>
+
+                        <div className="absolute inset-y-0 right-0 flex w-[72px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
+                          <button
+                            type="button"
+                            aria-label={`Decrease ${item.name}`}
+                            onClick={() => decrementCartItem(item.id)}
+                            className="flex-1 bg-white/5 hover:bg-white/10 flex items-center justify-center"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            aria-label={`Remove ${item.name}`}
+                            onClick={() => removeCartItem(item.id)}
+                            className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-200 flex items-center justify-center"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs opacity-70 transition-[right] duration-300 group-hover:right-20">
-                      x{item.qty}
-                    </span>
-
-                    <div className="absolute inset-y-0 right-0 flex w-[72px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
-                      <button
-                        type="button"
-                        aria-label={`Decrease ${item.name}`}
-                        onClick={() => decrementCartItem(item.id)}
-                        className="flex-1 bg-white/5 hover:bg-white/10 flex items-center justify-center"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button"
-                        aria-label={`Remove ${item.name}`}
-                        onClick={() => removeCartItem(item.id)}
-                        className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-200 flex items-center justify-center"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+                    ))}
                   </div>
-                ))
+                  <DropdownMenuSeparator />
+                  <Button asChild className="w-full rounded-lg bg-fizzyo-purple hover:bg-fizzyo-purple/90 text-white py-2 uppercase text-xs font-bold tracking-widest">
+                    <Link href="/shop">Proceed to Checkout</Link>
+                  </Button>
+                </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>

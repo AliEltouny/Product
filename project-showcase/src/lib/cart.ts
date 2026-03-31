@@ -46,13 +46,6 @@ export function addCartItem(payload: Omit<CartItem, 'qty'>) {
   writeStoredCart([...items, { ...payload, qty: 1 }]);
 }
 
-export function incrementCartItem(id: number) {
-  const items = readStoredCart().map((item) =>
-    item.id === id ? { ...item, qty: item.qty + 1 } : item
-  );
-  writeStoredCart(items);
-}
-
 export function decrementCartItem(id: number) {
   const items = readStoredCart()
     .map((item) => (item.id === id ? { ...item, qty: Math.max(0, item.qty - 1) } : item))
