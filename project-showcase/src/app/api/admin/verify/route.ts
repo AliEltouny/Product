@@ -8,10 +8,10 @@ const ADMIN_EMAIL = 'alieltouny.contact@gmail.com';
 const SECRET = process.env.SECRET || 'fizzyo-admin-secret-key';
 
 function generateToken(username: string, email: string) {
-  const timestamp = Date.now() + 24 * 60 * 60 * 1000;
-  const data = `${username}:${email}:${timestamp}`;
+  const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+  const data = `${username}:${email}:${expiresAt}`;
   const hash = createHash('sha256').update(data + SECRET).digest('hex');
-  return btoa(`${data}:${hash}`);
+  return Buffer.from(`${data}:${hash}`, 'utf8').toString('base64');
 }
 
 export async function POST(request: Request) {

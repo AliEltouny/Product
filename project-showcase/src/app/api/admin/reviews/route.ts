@@ -6,9 +6,20 @@ const SECRET = process.env.SECRET || 'fizzyo-admin-secret-key';
 
 function verifyToken(token: string): boolean {
   try {
-    const [data, hash] = atob(token).split(':').slice(-2);
-    const expectedHash = createHash('sha256').update(data.substring(0, data.lastIndexOf(':')) + SECRET).digest('hex');
-    return hash === expectedHash;
+    const decoded = Buffer.from(token, 'base64').toString('utf8');
+    const parts = decoded.split(':');
+    if (parts.length !== 4) return false;
+
+    const [username, email, expiresAt, hash] = parts;
+    const data = `${username}:${email}:${expiresAt}`;
+    const expectedHash = createHash('sha256').update(data + SECRET).digest('hex');
+
+    if (hash !== expectedHash) return false;
+
+    const expiresAtMs = Number(expiresAt);
+    if (!Number.isFinite(expiresAtMs) || Date.now() > expiresAtMs) return false;
+
+    return true;
   } catch {
     return false;
   }
