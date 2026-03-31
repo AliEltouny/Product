@@ -125,7 +125,7 @@ export function SodaCookbook() {
         Our Fizzy Recipe Book
       </h3>
 
-      <div className="relative rounded-[2rem] border-4 border-fizzyo-purple/60 bg-gradient-to-br from-[#f8eec8] to-[#f2e3ae] dark:from-[#2b1e23] dark:to-[#191116] shadow-[0_16px_40px_rgba(0,0,0,0.28)] overflow-visible px-3 py-3 md:px-4 md:py-4 aspect-[4/1] md:aspect-auto">
+      <div className="relative rounded-[2rem] border-4 border-fizzyo-purple/60 bg-gradient-to-br from-[#f8eec8] to-[#f2e3ae] dark:from-[#2b1e23] dark:to-[#191116] shadow-[0_16px_40px_rgba(0,0,0,0.28)] overflow-visible px-3 py-3 md:px-4 md:py-4 aspect-[3/1] md:aspect-auto">
         <div className="relative px-2 py-2 md:px-3 md:py-3 overflow-visible">
           <div className="absolute inset-0 rounded-[1.45rem] border border-black/10 dark:border-white/10 pointer-events-none" />
           <div className="relative overflow-hidden rounded-[1.45rem]">
@@ -215,7 +215,7 @@ export function SodaCookbook() {
 
 function RecipePage({ recipe, isTurningFace = false, onExpand }: { recipe: Recipe; isTurningFace?: boolean; onExpand?: (recipe: Recipe) => void }) {
   return (
-    <article className={`p-3 sm:p-4 md:p-5 border-r last:border-r-0 border-black/10 dark:border-white/10 h-auto sm:h-[380px] md:h-[420px] bg-gradient-to-br from-[#f7edc5]/90 to-[#f0e2af]/90 dark:from-[#2a1d23]/80 dark:to-[#1d1519]/80 overflow-y-auto sm:overflow-y-visible flex flex-col ${isTurningFace ? 'h-full' : ''}`}>
+    <article className={`p-3 sm:p-4 md:p-5 border-r last:border-r-0 border-black/10 dark:border-white/10 h-auto sm:h-[380px] md:h-[420px] bg-gradient-to-br from-[#f7edc5]/90 to-[#f0e2af]/90 dark:from-[#2a1d23]/80 dark:to-[#1d1519]/80 overflow-hidden sm:overflow-y-visible flex flex-col ${isTurningFace ? 'h-full' : ''}`}>
       <div className="flex items-start gap-2 sm:gap-3 mb-3 sm:mb-4">
         <img
           src={recipe.image}
@@ -235,7 +235,7 @@ function RecipePage({ recipe, isTurningFace = false, onExpand }: { recipe: Recip
 
       <div className="h-[1px] bg-black/15 dark:bg-white/15 mb-3 sm:mb-4" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-2.5 text-[10px] sm:text-[11px] md:text-xs flex-1 overflow-y-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-2.5 text-[10px] sm:text-[11px] md:text-xs flex-1 overflow-hidden sm:overflow-y-auto">
         <div>
           <h5 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Ingredients</h5>
           <ul className="space-y-1 text-black/80 dark:text-white/80 leading-snug">
