@@ -214,8 +214,8 @@ export function SodaCookbook() {
 }
 
 function RecipePage({ recipe, isTurningFace = false, onExpand }: { recipe: Recipe; isTurningFace?: boolean; onExpand?: (recipe: Recipe) => void }) {
-  const [expandedIng, setExpandedIng] = React.useState(true);
-  const [expandedInst, setExpandedInst] = React.useState(true);
+  const [expandedIng, setExpandedIng] = useState(false);
+  const [expandedInst, setExpandedInst] = useState(false);
 
   return (
     <article className={`p-3 sm:p-4 md:p-5 border-r last:border-r-0 border-black/10 dark:border-white/10 h-auto sm:h-[380px] md:h-[420px] bg-gradient-to-br from-[#f7edc5]/90 to-[#f0e2af]/90 dark:from-[#2a1d23]/80 dark:to-[#1d1519]/80 overflow-hidden sm:overflow-y-visible flex flex-col ${isTurningFace ? 'h-full' : ''}`}>
@@ -238,40 +238,40 @@ function RecipePage({ recipe, isTurningFace = false, onExpand }: { recipe: Recip
 
       <div className="h-[1px] bg-black/15 dark:bg-white/15 mb-3 sm:mb-4" />
 
-      <div className="space-y-2 text-[10px] sm:text-[11px] md:text-xs flex-1 overflow-hidden sm:overflow-y-auto">
+      <div className="sm:grid sm:grid-cols-2 sm:gap-3 sm:gap-2.5 text-[10px] sm:text-[11px] md:text-xs flex-1 overflow-hidden sm:overflow-y-auto space-y-2 sm:space-y-0">
         <div>
           <button
-            type="button"
             onClick={() => setExpandedIng(!expandedIng)}
-            className="flex items-center gap-2 w-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] text-black/80 dark:text-white/80 hover:opacity-70 transition-opacity"
+            className="sm:hidden w-full flex items-center justify-between mb-2 hover:opacity-80 transition-opacity"
           >
-            <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${expandedIng ? 'rotate-0' : '-rotate-90'}`} />
-            Ingredients
+            <h5 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] text-black/80 dark:text-white/80">Ingredients</h5>
+            <span className={`text-black/80 dark:text-white/80 transition-transform ${expandedIng ? 'rotate-180' : ''}`}>
+              ^
+            </span>
           </button>
-          {expandedIng && (
-            <ul className="space-y-1 text-black/80 dark:text-white/80 leading-snug mt-2 ml-5">
-              {recipe.ingredients.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          )}
+          <h5 className="hidden sm:block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Ingredients</h5>
+          <ul className={`space-y-1 text-black/80 dark:text-white/80 leading-snug ${!expandedIng ? 'max-sm:hidden' : ''}`}>
+            {recipe.ingredients.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
         </div>
         <div>
           <button
-            type="button"
             onClick={() => setExpandedInst(!expandedInst)}
-            className="flex items-center gap-2 w-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] text-black/80 dark:text-white/80 hover:opacity-70 transition-opacity"
+            className="sm:hidden w-full flex items-center justify-between mb-2 hover:opacity-80 transition-opacity"
           >
-            <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${expandedInst ? 'rotate-0' : '-rotate-90'}`} />
-            Instructions
+            <h5 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] text-black/80 dark:text-white/80">Instructions</h5>
+            <span className={`text-black/80 dark:text-white/80 transition-transform ${expandedInst ? 'rotate-180' : ''}`}>
+              ^
+            </span>
           </button>
-          {expandedInst && (
-            <ol className="space-y-1 text-black/80 dark:text-white/80 leading-snug mt-2 ml-5 list-decimal list-inside">
-              {recipe.instructions.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
-          )}
+          <h5 className="hidden sm:block text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Instructions</h5>
+          <ol className={`space-y-1 text-black/80 dark:text-white/80 leading-snug list-decimal list-inside ${!expandedInst ? 'max-sm:hidden' : ''}`}>
+            {recipe.instructions.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ol>
         </div>
       </div>
 
