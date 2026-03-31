@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 type Recipe = {
   id: number;
@@ -89,6 +89,7 @@ export function SodaCookbook() {
   const [isTurning, setIsTurning] = useState(false);
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const [nextIndex, setNextIndex] = useState(0);
+  const [expandedRecipe, setExpandedRecipe] = useState<Recipe | null>(null);
 
   const getRecipe = (recipeIndex: number) => RECIPES[(recipeIndex + RECIPES.length) % RECIPES.length];
 
@@ -124,15 +125,15 @@ export function SodaCookbook() {
         Our Fizzy Recipe Book
       </h3>
 
-      <div className="relative rounded-[2rem] border-4 border-fizzyo-purple/60 bg-gradient-to-br from-[#f8eec8] to-[#f2e3ae] dark:from-[#2b1e23] dark:to-[#191116] shadow-[0_16px_40px_rgba(0,0,0,0.28)] overflow-visible px-3 py-3 md:px-4 md:py-4">
+      <div className="relative rounded-[2rem] border-4 border-fizzyo-purple/60 bg-gradient-to-br from-[#f8eec8] to-[#f2e3ae] dark:from-[#2b1e23] dark:to-[#191116] shadow-[0_16px_40px_rgba(0,0,0,0.28)] overflow-visible px-3 py-3 md:px-4 md:py-4 aspect-video md:aspect-auto">
         <div className="relative px-2 py-2 md:px-3 md:py-3 overflow-visible">
           <div className="absolute inset-0 rounded-[1.45rem] border border-black/10 dark:border-white/10 pointer-events-none" />
           <div className="relative overflow-hidden rounded-[1.45rem]">
           <div className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-[2px] -translate-x-1/2 bg-gradient-to-b from-fizzyo-purple/20 via-fizzyo-purple/45 to-fizzyo-purple/20" />
 
           <div className="grid grid-cols-2">
-            <RecipePage recipe={baseLeftPage} />
-            <RecipePage recipe={baseRightPage} />
+            <RecipePage recipe={baseLeftPage} onExpand={setExpandedRecipe} />
+            <RecipePage recipe={baseRightPage} onExpand={setExpandedRecipe} />
           </div>
 
           <div
@@ -149,7 +150,7 @@ export function SodaCookbook() {
               className="absolute inset-0"
               style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
             >
-              <RecipePage recipe={turnFrontPage} isTurningFace />
+              <RecipePage recipe={turnFrontPage} isTurningFace onExpand={setExpandedRecipe} />
               <div className="absolute inset-y-0 right-0 w-[14%] bg-gradient-to-l from-black/20 to-transparent dark:from-black/40" />
             </div>
             <div
@@ -160,7 +161,7 @@ export function SodaCookbook() {
                 transform: 'rotateY(180deg)',
               }}
             >
-              <RecipePage recipe={turnBackPage} isTurningFace />
+              <RecipePage recipe={turnBackPage} isTurningFace onExpand={setExpandedRecipe} />
               <div className="absolute inset-y-0 left-0 w-[14%] bg-gradient-to-r from-black/20 to-transparent dark:from-black/40" />
             </div>
           </div>
@@ -206,20 +207,22 @@ export function SodaCookbook() {
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
+
+      {expandedRecipe && <RecipeModal recipe={expandedRecipe} onClose={() => setExpandedRecipe(null)} />}
     </div>
   );
 }
 
-function RecipePage({ recipe, isTurningFace = false }: { recipe: Recipe; isTurningFace?: boolean }) {
+function RecipePage({ recipe, isTurningFace = false, onExpand }: { recipe: Recipe; isTurningFace?: boolean; onExpand?: (recipe: Recipe) => void }) {
   return (
-    <article className={`p-3 sm:p-4 md:p-5 border-r last:border-r-0 border-black/10 dark:border-white/10 h-auto sm:h-[380px] md:h-[420px] bg-gradient-to-br from-[#f7edc5]/90 to-[#f0e2af]/90 dark:from-[#2a1d23]/80 dark:to-[#1d1519]/80 overflow-y-auto sm:overflow-y-visible ${isTurningFace ? 'h-full' : ''}`}>
+    <article className={`p-3 sm:p-4 md:p-5 border-r last:border-r-0 border-black/10 dark:border-white/10 h-auto sm:h-[380px] md:h-[420px] bg-gradient-to-br from-[#f7edc5]/90 to-[#f0e2af]/90 dark:from-[#2a1d23]/80 dark:to-[#1d1519]/80 overflow-y-auto sm:overflow-y-visible flex flex-col ${isTurningFace ? 'h-full' : ''}`}>
       <div className="flex items-start gap-2 sm:gap-3 mb-3 sm:mb-4">
         <img
           src={recipe.image}
           alt={`${recipe.soda} soda`}
           className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 object-contain rounded-lg bg-black/40 border border-black/10 dark:border-white/10 flex-shrink-0"
         />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="inline-flex rounded-full px-2 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-black/70 dark:text-white/80 bg-black/10 dark:bg-white/10 mb-2">
             {recipe.subtitle}
           </p>
@@ -232,7 +235,7 @@ function RecipePage({ recipe, isTurningFace = false }: { recipe: Recipe; isTurni
 
       <div className="h-[1px] bg-black/15 dark:bg-white/15 mb-3 sm:mb-4" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-2.5 text-[10px] sm:text-[11px] md:text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-2.5 text-[10px] sm:text-[11px] md:text-xs flex-1 overflow-y-auto">
         <div>
           <h5 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Ingredients</h5>
           <ul className="space-y-1 text-black/80 dark:text-white/80 leading-snug">
@@ -250,6 +253,82 @@ function RecipePage({ recipe, isTurningFace = false }: { recipe: Recipe; isTurni
           </ol>
         </div>
       </div>
+
+      {onExpand && (
+        <button
+          type="button"
+          onClick={() => onExpand(recipe)}
+          className="mt-3 sm:hidden w-full py-2 bg-white font-bold text-black rounded-lg hover:bg-white/90 transition-colors text-sm"
+        >
+          View Full Recipe
+        </button>
+      )}
     </article>
+  );
+}
+
+function RecipeModal({ recipe, onClose }: { recipe: Recipe; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/50">
+      <div className="bg-gradient-to-br from-[#f7edc5] to-[#f0e2af] dark:from-[#2a1d23] dark:to-[#1d1519] rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 flex items-center justify-between p-4 sm:p-6 border-b border-black/10 dark:border-white/10 bg-gradient-to-br from-[#f7edc5] to-[#f0e2af] dark:from-[#2a1d23] dark:to-[#1d1519]">
+          <div className="flex items-center gap-4">
+            <img
+              src={recipe.image}
+              alt={`${recipe.soda} soda`}
+              className="h-20 w-20 object-contain rounded-lg bg-black/40 border border-black/10 dark:border-white/10"
+            />
+            <div>
+              <p className="inline-flex rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-black/70 dark:text-white/80 bg-black/10 dark:bg-white/10 mb-2">
+                {recipe.subtitle}
+              </p>
+              <h2 className="text-2xl sm:text-3xl font-black text-black/90 dark:text-white">
+                {recipe.title}
+              </h2>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-shrink-0 p-2 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-colors text-black/70 dark:text-white/70"
+            aria-label="Close modal"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <div className="p-4 sm:p-6">
+          <p className="text-base text-black/80 dark:text-white/80 mb-6">{recipe.summary}</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-[14px] font-black uppercase tracking-[0.15em] mb-4 text-black/80 dark:text-white/80">Ingredients</h3>
+              <ul className="space-y-2 text-sm text-black/80 dark:text-white/80 leading-relaxed">
+                {recipe.ingredients.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-1.5 h-2 w-2 rounded-full bg-black/40 dark:bg-white/40 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-[14px] font-black uppercase tracking-[0.15em] mb-4 text-black/80 dark:text-white/80">Instructions</h3>
+              <ol className="space-y-3 text-sm text-black/80 dark:text-white/80 leading-relaxed">
+                {recipe.instructions.map((item, idx) => (
+                  <li key={item} className="flex gap-3">
+                    <span className="font-black text-base bg-black/10 dark:bg-white/10 text-black/70 dark:text-white/70 rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0">
+                      {idx + 1}
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
