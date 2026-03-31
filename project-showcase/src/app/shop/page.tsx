@@ -245,12 +245,12 @@ export default function ShopPage() {
                     <p className="text-xs text-white/50">${PRICE_PER_ITEM.toFixed(2)} each</p>
                   </div>
 
-                  <div className="absolute inset-y-0 right-0 flex w-[104px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
+                  <div className="absolute inset-y-0 right-0 flex w-[72px] translate-x-full transition-transform duration-300 group-hover:translate-x-0">
                     <button
                       type="button"
                       aria-label={`Increase ${item.name}`}
                       onClick={() => incrementCartItem(item.id)}
-                      className="flex-1 bg-white/5 hover:bg-white/10 flex items-center justify-center"
+                      className="flex-1 bg-green-500/20 hover:bg-green-500/30 text-green-200 flex items-center justify-center"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
@@ -277,12 +277,6 @@ export default function ShopPage() {
 
             <aside className="rounded-2xl border border-white/10 bg-white/5 p-6 sticky top-28 space-y-5">
               <h3 className="text-2xl font-headline font-bold uppercase mb-6">Order Summary</h3>
-              <Button
-                onClick={() => document.querySelector('aside')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full rounded-full bg-fizzyo-purple hover:bg-fizzyo-purple/90 text-white py-5 uppercase text-xs font-bold tracking-widest lg:hidden"
-              >
-                Proceed to Checkout
-              </Button>
               <div className="flex items-center justify-between text-white/80 mb-3">
                 <span>Items</span>
                 <span>{totalItems}</span>
@@ -292,7 +286,19 @@ export default function ShopPage() {
                 <span>${subtotal.toFixed(2)}</span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
+                <Button
+                  onClick={() => {
+                    const checkoutSection = document.querySelector('[data-checkout]');
+                    checkoutSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="w-full rounded-full bg-fizzyo-purple hover:bg-fizzyo-purple/90 text-white py-5 uppercase text-xs font-bold tracking-widest"
+                >
+                  Proceed to Checkout
+                </Button>
+              </div>
+
+              <div data-checkout className="space-y-3">
                 <label className="text-xs uppercase tracking-[0.2em] text-white/55 block">Email</label>
                 <input
                   type="email"

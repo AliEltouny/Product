@@ -47,7 +47,9 @@ export function addCartItem(payload: Omit<CartItem, 'qty'>) {
 }
 
 export function incrementCartItem(id: number) {
-  const items = readStoredCart().map((item) => (item.id === id ? { ...item, qty: item.qty + 1 } : item));
+  const items = readStoredCart().map((item) =>
+    item.id === id ? { ...item, qty: item.qty + 1 } : item
+  );
   writeStoredCart(items);
 }
 
