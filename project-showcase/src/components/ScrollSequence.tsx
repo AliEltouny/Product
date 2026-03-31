@@ -25,7 +25,7 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
       let width: number, finalHeight: number;
 
       if (isMobile) {
-        // Mobile: fill entire screen, reaching top and bottom edges
+        // Mobile: 1:1 square ratio, fill viewport completely
         width = viewportWidth;
         finalHeight = height;
       } else {
@@ -118,6 +118,7 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
           key={variant.id}
           src={variant.videoUrl}
           className="h-full w-full"
+          style={{ objectFit: 'cover' }}
           muted
           playsInline
           preload="auto"
