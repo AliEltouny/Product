@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Check } from 'lucide-react';
 
 type Order = {
   orderNumber: string;
@@ -67,6 +67,9 @@ export default function AdminDashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [updatingIssueId, setUpdatingIssueId] = useState<string | null>(null);
+  const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
+  const [selectedReviews, setSelectedReviews] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('adminToken');
@@ -215,6 +218,104 @@ export default function AdminDashboardPage() {
     router.push('/admin');
   };
 
+  const toggleOrderSelection = (orderNumber: string) => {
+    const newSelected = new Set(selectedOrders);
+    if (newSelected.has(orderNumber)) {
+      newSelected.delete(orderNumber);
+    } else {
+      newSelected.add(orderNumber);
+    }
+    setSelectedOrders(newSelected);
+  };
+
+  const toggleReviewSelection = (reviewId: string) => {
+    const newSelected = new Set(selectedReviews);
+    if (newSelected.has(reviewId)) {
+      newSelected.delete(reviewId);
+    } else {
+      newSelected.add(reviewId);
+    }
+    setSelectedReviews(newSelected);
+  };
+
+  const toggleSelectAllOrders = () => {
+    if (selectedOrders.size === orders.length) {
+      setSelectedOrders(new Set());
+    } else {
+      setSelectedOrders(new Set(orders.map(o => o.orderNumber)));
+    }
+  };
+
+  const toggleSelectAllReviews = () => {
+    if (selectedReviews.size === reviews.length) {
+      setSelectedReviews(new Set());
+    } else {
+      setSelectedReviews(new Set(reviews.map(r => r.id)));
+    }
+  };
+
+  const handleBulkDeleteOrders = async () => {
+    if (selectedOrders.size === 0) return;
+    if (!token) return;
+    if (!confirm(`Are you sure you want to delete ${selectedOrders.size} order(s)? This action cannot be undone.`)) return;
+
+    setBulkDeleting(true);
+    try {
+      const results = await Promise.allSettled(
+        Array.from(selectedOrders).map(orderNumber =>
+          fetch(`/api/admin/orders/${orderNumber}/delete`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        )
+      );
+
+      const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.ok)).length;
+      
+      setOrders(prev => prev.filter(o => !selectedOrders.has(o.orderNumber)));
+      setSelectedOrders(new Set());
+      
+      if (failed > 0) {
+        setError(`Failed to delete ${failed} order(s)`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete orders');
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
+  const handleBulkDeleteReviews = async () => {
+    if (selectedReviews.size === 0) return;
+    if (!token) return;
+    if (!confirm(`Are you sure you want to delete ${selectedReviews.size} review(s)?`)) return;
+
+    setBulkDeleting(true);
+    try {
+      const results = await Promise.allSettled(
+        Array.from(selectedReviews).map(reviewId =>
+          fetch(`/api/admin/reviews/${reviewId}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        )
+      );
+
+      const failed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && !r.value.ok)).length;
+      
+      setReviews(prev => prev.filter(r => !selectedReviews.has(r.id)));
+      setSelectedReviews(new Set());
+      
+      if (failed > 0) {
+        setError(`Failed to delete ${failed} review(s)`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete reviews');
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
   if (!token) return null;
 
   return (
@@ -297,6 +398,28 @@ export default function AdminDashboardPage() {
             </div>
           ) : activeTab === 'orders' ? (
             <div className="space-y-4">
+              {selectedOrders.size > 0 && (
+                <div className="flex gap-2 items-center p-4 rounded-2xl border border-fizzyo-purple/30 bg-fizzyo-purple/10 mb-4">
+                  <button
+                    onClick={toggleSelectAllOrders}
+                    className="px-4 py-2 rounded-lg bg-fizzyo-purple text-white font-bold text-xs uppercase tracking-widest hover:bg-fizzyo-purple/80 transition-all"
+                  >
+                    {selectedOrders.size === orders.length ? 'Deselect All' : 'Select All'}
+                  </button>
+                  <span className="text-white/80 font-bold ml-2">
+                    {selectedOrders.size} selected
+                  </span>
+                  <button
+                    onClick={handleBulkDeleteOrders}
+                    disabled={bulkDeleting}
+                    className="ml-auto px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest disabled:opacity-50 transition-all flex items-center gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Bulk Delete ({selectedOrders.size})
+                  </button>
+                </div>
+              )}
+              
               {orders.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
                   <p className="text-white/60">No orders yet.</p>
@@ -305,60 +428,100 @@ export default function AdminDashboardPage() {
                 orders.map((order) => (
                   <div
                     key={order.orderNumber}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-6 relative"
+                    className="rounded-2xl border border-white/10 bg-white/5 p-6 relative group"
                   >
-                    <button
-                      onClick={() => handleDeleteOrder(order.orderNumber)}
-                      disabled={deletingId === order.orderNumber}
-                      className="absolute top-4 right-4 p-2 hover:bg-red-500/20 rounded-lg transition-colors text-red-200 disabled:opacity-50"
-                      aria-label="Delete order"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold">{order.orderNumber}</h3>
-                        <p className="text-sm text-white/60">{order.customerEmail}</p>
-                        <p className="text-sm text-white/60">{order.customerPhone}</p>
+                    <div className="flex items-start gap-4">
+                      {selectedOrders.size > 0 && (
+                        <div className="flex items-center pt-1">
+                          <input
+                            type="checkbox"
+                            checked={selectedOrders.has(order.orderNumber)}
+                            onChange={() => toggleOrderSelection(order.orderNumber)}
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
+                      )}
+                      
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-4 gap-4">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold">{order.orderNumber}</h3>
+                            <p className="text-sm text-white/60">{order.customerEmail}</p>
+                            <p className="text-sm text-white/60">{order.customerPhone}</p>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <p className="text-2xl font-bold">${Number(order.subtotal || 0).toFixed(2)}</p>
+                            <span
+                              className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mt-2 ${
+                                order.status === 'delivered'
+                                  ? 'bg-green-500/20 text-green-200'
+                                  : order.status === 'out-for-delivery'
+                                  ? 'bg-blue-500/20 text-blue-200'
+                                  : order.status === 'prep'
+                                  ? 'bg-yellow-500/20 text-yellow-200'
+                                  : order.status === 'cancelled'
+                                  ? 'bg-red-500/20 text-red-200'
+                                  : 'bg-gray-500/20 text-gray-200'
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-white/50 mb-2">Items:</p>
+                          <ul className="text-sm text-white/70 space-y-1">
+                            {(Array.isArray(order.items) ? order.items : []).map((item) => (
+                              <li key={item.id}>
+                                {item.name} {item.subtitle} x{item.qty}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <p className="text-xs text-white/40 mt-4">
+                          {new Date(order.createdAt).toLocaleString()}
+                        </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold">${Number(order.subtotal || 0).toFixed(2)}</p>
-                        <span
-                          className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mt-2 ${
-                            order.status === 'delivered'
-                              ? 'bg-green-500/20 text-green-200'
-                              : order.status === 'out-for-delivery'
-                              ? 'bg-blue-500/20 text-blue-200'
-                              : order.status === 'prep'
-                              ? 'bg-yellow-500/20 text-yellow-200'
-                              : order.status === 'cancelled'
-                              ? 'bg-red-500/20 text-red-200'
-                              : 'bg-gray-500/20 text-gray-200'
-                          }`}
+
+                      {selectedOrders.size === 0 && (
+                        <button
+                          onClick={() => handleDeleteOrder(order.orderNumber)}
+                          disabled={deletingId === order.orderNumber}
+                          className="opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/20 rounded-lg transition-all text-red-200 disabled:opacity-50 flex-shrink-0"
+                          aria-label="Delete order"
                         >
-                          {order.status}
-                        </span>
-                      </div>
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      )}
                     </div>
-                    <div>
-                      <p className="text-xs text-white/50 mb-2">Items:</p>
-                      <ul className="text-sm text-white/70 space-y-1">
-                        {(Array.isArray(order.items) ? order.items : []).map((item) => (
-                          <li key={item.id}>
-                            {item.name} {item.subtitle} x{item.qty}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <p className="text-xs text-white/40 mt-4">
-                      {new Date(order.createdAt).toLocaleString()}
-                    </p>
                   </div>
                 ))
               )}
             </div>
           ) : activeTab === 'reviews' ? (
             <div className="space-y-4">
+              {selectedReviews.size > 0 && (
+                <div className="flex gap-2 items-center p-4 rounded-2xl border border-fizzyo-purple/30 bg-fizzyo-purple/10 mb-4">
+                  <button
+                    onClick={toggleSelectAllReviews}
+                    className="px-4 py-2 rounded-lg bg-fizzyo-purple text-white font-bold text-xs uppercase tracking-widest hover:bg-fizzyo-purple/80 transition-all"
+                  >
+                    {selectedReviews.size === reviews.length ? 'Deselect All' : 'Select All'}
+                  </button>
+                  <span className="text-white/80 font-bold ml-2">
+                    {selectedReviews.size} selected
+                  </span>
+                  <button
+                    onClick={handleBulkDeleteReviews}
+                    disabled={bulkDeleting}
+                    className="ml-auto px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-widest disabled:opacity-50 transition-all flex items-center gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Bulk Delete ({selectedReviews.size})
+                  </button>
+                </div>
+              )}
+
               {reviews.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
                   <p className="text-white/60">No reviews yet.</p>
@@ -367,36 +530,55 @@ export default function AdminDashboardPage() {
                 reviews.map((review) => (
                   <div
                     key={review.id}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-6 relative"
+                    className="rounded-2xl border border-white/10 bg-white/5 p-6 relative group"
                   >
-                    <button
-                      onClick={() => handleDeleteReview(review.id)}
-                      disabled={deletingId === review.id}
-                      className="absolute top-4 right-4 p-2 hover:bg-red-500/20 rounded-lg transition-colors text-red-200 disabled:opacity-50"
-                      aria-label="Delete review"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                    <div className="mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <p className="font-bold">
-                          {review.firstName} {review.lastName}
-                        </p>
-                        <div className="flex gap-1">
-                          {Array.from({ length: review.rating }).map((_, i) => (
-                            <span key={i} className="text-yellow-400">
-                              ★
-                            </span>
-                          ))}
+                    <div className="flex items-start gap-4">
+                      {selectedReviews.size > 0 && (
+                        <div className="flex items-center pt-1">
+                          <input
+                            type="checkbox"
+                            checked={selectedReviews.has(review.id)}
+                            onChange={() => toggleReviewSelection(review.id)}
+                            className="w-5 h-5 cursor-pointer"
+                          />
                         </div>
+                      )}
+
+                      <div className="flex-1">
+                        <div className="mb-4 flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <p className="font-bold">
+                                {review.firstName} {review.lastName}
+                              </p>
+                              <div className="flex gap-1">
+                                {Array.from({ length: review.rating }).map((_, i) => (
+                                  <span key={i} className="text-yellow-400">
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <p className="text-sm text-white/60">{review.email}</p>
+                            <p className="text-sm text-white/60">Order: {review.orderNumber}</p>
+                          </div>
+                          {selectedReviews.size === 0 && (
+                            <button
+                              onClick={() => handleDeleteReview(review.id)}
+                              disabled={deletingId === review.id}
+                              className="opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/20 rounded-lg transition-all text-red-200 disabled:opacity-50 flex-shrink-0"
+                              aria-label="Delete review"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          )}
+                        </div>
+                        <p className="text-white/80 mb-4">{review.comment}</p>
+                        <p className="text-xs text-white/40">
+                          {new Date(review.createdAt).toLocaleString()}
+                        </p>
                       </div>
-                      <p className="text-sm text-white/60">{review.email}</p>
-                      <p className="text-sm text-white/60">Order: {review.orderNumber}</p>
                     </div>
-                    <p className="text-white/80 mb-4">{review.comment}</p>
-                    <p className="text-xs text-white/40">
-                      {new Date(review.createdAt).toLocaleString()}
-                    </p>
                   </div>
                 ))
               )}
