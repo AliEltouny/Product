@@ -25,9 +25,9 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
       let width: number, finalHeight: number;
 
       if (isMobile) {
-        // Mobile: 1:1 square ratio, edges touch screen sides
+        // Mobile: fill entire screen, reaching top and bottom edges
         width = viewportWidth;
-        finalHeight = viewportWidth;
+        finalHeight = height;
       } else {
         // Desktop: full width, height proportional to video aspect ratio
         width = viewportWidth;
