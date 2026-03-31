@@ -40,7 +40,7 @@ const NUTRITION_VARIANTS: NutritionVariant[] = [
   {
     id: 'grape',
     name: 'Grape',
-    color: '#5226D9',
+    color: '#A1C7ED',
     calories: '40',
     sodium: '20mg',
     sodiumDv: '1%',

@@ -43,7 +43,7 @@ const RECIPES: Recipe[] = [
     soda: 'Grape',
     subtitle: 'Deep + Smooth',
     image: 'https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/Grape%201.png?v=4',
-    color: '#5226D9',
+    color: '#A1C7ED',
     title: 'Grape Night Fizz',
     summary: 'Layered grape fizz balanced with citrus and a ginger snap.',
     ingredients: [

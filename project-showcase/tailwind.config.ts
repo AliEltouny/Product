@@ -50,7 +50,7 @@ export default {
         ring: 'hsl(var(--ring))',
         fizzyo: {
           charcoal: '#000000',
-          purple: '#5226D9',
+          purple: '#A1C7ED',
           blue: '#A1C7ED',
         }
       },

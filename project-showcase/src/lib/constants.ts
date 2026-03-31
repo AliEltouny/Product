@@ -23,8 +23,8 @@ export const DRINK_VARIANTS: DrinkVariant[] = [
     name: "GRAPE",
     subtitle: "Soda",
     description: "A functional soda brand inspired by classic flavors but made with better ingredients and real fruit juices.",
-    themeColor: "#5226D9",
-    accentColor: "#3a1a9e",
+    themeColor: "#A1C7ED",
+    accentColor: "#7FA8D1",
     videoUrl: "https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/grapes.mp4"
   },
   {
