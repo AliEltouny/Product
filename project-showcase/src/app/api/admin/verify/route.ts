@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
 import { verifyCode } from '@/lib/checkout-store';
-import * as jwt from 'jsonwebtoken';
+import { createHash } from 'crypto';
 
 const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = 'fizzyo2024';
 const ADMIN_EMAIL = 'alieltouny.contact@gmail.com';
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const SECRET = process.env.SECRET || 'fizzyo-admin-secret-key';
+
+function generateToken(username: string, email: string) {
+  const timestamp = Date.now() + 24 * 60 * 60 * 1000;
+  const data = `${username}:${email}:${timestamp}`;
+  const hash = createHash('sha256').update(data + SECRET).digest('hex');
+  return btoa(`${data}:${hash}`);
+}
 
 export async function POST(request: Request) {
   try {
@@ -32,12 +39,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create JWT token
-    const token = jwt.sign(
-      { username, email: ADMIN_EMAIL, isAdmin: true },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    // Create token
+    const token = generateToken(ADMIN_USERNAME, ADMIN_EMAIL);
 
     return NextResponse.json({ ok: true, token });
   } catch (error) {

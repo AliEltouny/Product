@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
-import * as jwt from 'jsonwebtoken';
+import { createHash } from 'crypto';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const SECRET = process.env.SECRET || 'fizzyo-admin-secret-key';
 
-function verifyToken(token: string) {
+function verifyToken(token: string): boolean {
   try {
-    return jwt.verify(token, JWT_SECRET) as { username: string; email: string; isAdmin: boolean };
+    const [data, hash] = atob(token).split(':').slice(-2);
+    const expectedHash = createHash('sha256').update(data.substring(0, data.lastIndexOf(':')) + SECRET).digest('hex');
+    return hash === expectedHash;
   } catch {
-    return null;
+    return false;
   }
 }
 
