@@ -18,11 +18,24 @@ export function ScrollSequence({ variant, onImageLoadProgress, onVideoEnd }: Scr
 
   useEffect(() => {
     const updateFrameSize = () => {
-      // Fill full hero height so the frame touches top and bottom of the viewport.
       const height = window.innerHeight;
-      const width = height * videoAspect;
+      const viewportWidth = window.innerWidth;
+      const isMobile = viewportWidth < 768;
 
-      setFrameSize({ width, height });
+      let width: number, finalHeight: number;
+
+      if (isMobile) {
+        // Mobile: 1:1 square ratio, zoomed to fill viewport
+        const size = Math.min(viewportWidth, height) * 1.2;
+        width = size;
+        finalHeight = size;
+      } else {
+        // Desktop: full width, height proportional to video aspect ratio
+        width = viewportWidth;
+        finalHeight = width / videoAspect;
+      }
+
+      setFrameSize({ width, height: finalHeight });
     };
 
     updateFrameSize();
