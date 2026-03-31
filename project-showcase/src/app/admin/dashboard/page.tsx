@@ -36,13 +36,33 @@ type Issue = {
   createdAt: number;
 };
 
+type ReportData = {
+  period: string;
+  startDate: string;
+  endDate: string;
+  totals: {
+    revenue: number;
+    orders: number;
+    items: number;
+    avgOrderValue: number;
+  };
+  data: Array<{
+    date: string;
+    revenue: number;
+    count: number;
+    items: number;
+  }>;
+};
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [issues, setIssues] = useState<Issue[]>([]);
-  const [activeTab, setActiveTab] = useState<'orders' | 'reviews' | 'issues'>('orders');
+  const [reports, setReports] = useState<ReportData | null>(null);
+  const [reportPeriod, setReportPeriod] = useState<'day' | 'week' | 'month' | '6months' | 'year'>('month');
+  const [activeTab, setActiveTab] = useState<'orders' | 'reviews' | 'issues' | 'reports'>('orders');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -92,6 +112,27 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const fetchReports = async (authToken: string, period: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/admin/reports?period=${period}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch reports');
+      }
+
+      const data = await response.json();
+      setReports(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch reports');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleDeleteReview = async (reviewId: string) => {
     if (!token) return;
     if (!confirm('Are you sure you want to delete this review?')) return;
@@ -110,6 +151,29 @@ export default function AdminDashboardPage() {
       setReviews((prev) => prev.filter((r) => r.id !== reviewId));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete review');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleDeleteOrder = async (orderNumber: string) => {
+    if (!token) return;
+    if (!confirm(`Are you sure you want to delete order ${orderNumber} from the system? This action cannot be undone.`)) return;
+
+    setDeletingId(orderNumber);
+    try {
+      const response = await fetch(`/api/admin/orders/${orderNumber}/delete`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete order');
+      }
+
+      setOrders((prev) => prev.filter((o) => o.orderNumber !== orderNumber));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete order');
     } finally {
       setDeletingId(null);
     }
@@ -201,7 +265,9 @@ export default function AdminDashboardPage() {
               Reviews ({reviews.length})
             </button>
             <button
-              onClick={() => setActiveTab('issues')}
+              onClick={() => {
+                setActiveTab('issues');
+              }}
               className={`px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-xs transition-all ${
                 activeTab === 'issues'
                   ? 'bg-fizzyo-purple text-white'
@@ -209,6 +275,19 @@ export default function AdminDashboardPage() {
               }`}
             >
               Issues ({issues.length})
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('reports');
+                if (token) fetchReports(token, reportPeriod);
+              }}
+              className={`px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-xs transition-all ${
+                activeTab === 'reports'
+                  ? 'bg-fizzyo-purple text-white'
+                  : 'bg-white/10 text-white/60 hover:text-white'
+              }`}
+            >
+              Reports
             </button>
           </div>
 
@@ -226,8 +305,16 @@ export default function AdminDashboardPage() {
                 orders.map((order) => (
                   <div
                     key={order.orderNumber}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-6"
+                    className="rounded-2xl border border-white/10 bg-white/5 p-6 relative"
                   >
+                    <button
+                      onClick={() => handleDeleteOrder(order.orderNumber)}
+                      disabled={deletingId === order.orderNumber}
+                      className="absolute top-4 right-4 p-2 hover:bg-red-500/20 rounded-lg transition-colors text-red-200 disabled:opacity-50"
+                      aria-label="Delete order"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-xl font-bold">{order.orderNumber}</h3>
@@ -314,7 +401,7 @@ export default function AdminDashboardPage() {
                 ))
               )}
             </div>
-          ) : (
+          ) : activeTab === 'issues' ? (
             <div className="space-y-4">
               {issues.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
@@ -379,7 +466,74 @@ export default function AdminDashboardPage() {
                 ))
               )}
             </div>
-          )}
+          ) : activeTab === 'reports' ? (
+            <div className="space-y-4">
+              <div className="flex gap-2 mb-6">
+                {(['day', 'week', 'month', '6months', 'year'] as const).map((period) => (
+                  <button
+                    key={period}
+                    onClick={() => {
+                      setReportPeriod(period);
+                      if (token) fetchReports(token, period);
+                    }}
+                    className={`px-4 py-2 rounded-lg font-bold uppercase tracking-widest text-xs transition-all ${
+                      reportPeriod === period
+                        ? 'bg-fizzyo-purple text-white'
+                        : 'bg-white/10 text-white/60 hover:text-white'
+                    }`}
+                  >
+                    {period === 'day' ? 'Daily' : period === 'week' ? 'Weekly' : period === 'month' ? 'Monthly' : period === '6months' ? '6 Months' : 'Yearly'}
+                  </button>
+                ))}
+              </div>
+
+              {isLoading ? (
+                <div className="text-center py-12">
+                  <p className="text-white/60">Loading reports...</p>
+                </div>
+              ) : reports ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                      <p className="text-xs text-white/60 mb-2">Total Revenue</p>
+                      <p className="text-3xl font-bold text-fizzyo-purple">${reports.totals.revenue.toFixed(2)}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                      <p className="text-xs text-white/60 mb-2">Total Orders</p>
+                      <p className="text-3xl font-bold text-fizzyo-purple">{reports.totals.orders}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                      <p className="text-xs text-white/60 mb-2">Total Items Sold</p>
+                      <p className="text-3xl font-bold text-fizzyo-purple">{reports.totals.items}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                      <p className="text-xs text-white/60 mb-2">Avg Order Value</p>
+                      <p className="text-3xl font-bold text-fizzyo-purple">${reports.totals.avgOrderValue.toFixed(2)}</p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                    <p className="text-sm text-white/60 mb-4">Sales Breakdown ({reports.period})</p>
+                    <div className="space-y-2 max-h-96 overflow-y-auto">
+                      {reports.data.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between pb-2 border-b border-white/10 last:border-0">
+                          <div>
+                            <p className="text-white font-semibold">{item.date}</p>
+                            <p className="text-xs text-white/60">{item.count} order(s) • {item.items} item(s)</p>
+                          </div>
+                          <p className="text-lg font-bold text-green-400">${item.revenue.toFixed(2)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
+                  <p className="text-white/60">No sales data available for this period.</p>
+                </div>
+              )}
+            </div>
+          ) : null}
         </div>
       </section>
     </main>
