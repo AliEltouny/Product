@@ -212,29 +212,29 @@ export function SodaCookbook() {
 
 function RecipePage({ recipe, isTurningFace = false }: { recipe: Recipe; isTurningFace?: boolean }) {
   return (
-    <article className={`p-4 md:p-5 border-r last:border-r-0 border-black/10 dark:border-white/10 h-[400px] md:h-[420px] bg-gradient-to-br from-[#f7edc5]/90 to-[#f0e2af]/90 dark:from-[#2a1d23]/80 dark:to-[#1d1519]/80 ${isTurningFace ? 'h-full' : ''}`}>
-      <div className="flex items-start gap-3 mb-4">
+    <article className={`p-3 sm:p-4 md:p-5 border-r last:border-r-0 border-black/10 dark:border-white/10 h-auto sm:h-[380px] md:h-[420px] bg-gradient-to-br from-[#f7edc5]/90 to-[#f0e2af]/90 dark:from-[#2a1d23]/80 dark:to-[#1d1519]/80 overflow-y-auto sm:overflow-y-visible ${isTurningFace ? 'h-full' : ''}`}>
+      <div className="flex items-start gap-2 sm:gap-3 mb-3 sm:mb-4">
         <img
           src={recipe.image}
           alt={`${recipe.soda} soda`}
-          className="h-16 w-16 md:h-20 md:w-20 object-contain rounded-lg bg-black/40 border border-black/10 dark:border-white/10"
+          className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 object-contain rounded-lg bg-black/40 border border-black/10 dark:border-white/10 flex-shrink-0"
         />
         <div className="min-w-0">
-          <p className="inline-flex rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-black/70 dark:text-white/80 bg-black/10 dark:bg-white/10 mb-2">
+          <p className="inline-flex rounded-full px-2 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-black/70 dark:text-white/80 bg-black/10 dark:bg-white/10 mb-2">
             {recipe.subtitle}
           </p>
-          <h4 className="text-xl md:text-2xl font-black leading-tight tracking-tight text-black/90 dark:text-white">
+          <h4 className="text-base sm:text-xl md:text-2xl font-black leading-tight tracking-tight text-black/90 dark:text-white">
             {recipe.title}
           </h4>
-          <p className="text-xs md:text-sm text-black/70 dark:text-white/75 mt-1">{recipe.summary}</p>
+          <p className="text-[11px] sm:text-xs md:text-sm text-black/70 dark:text-white/75 mt-1">{recipe.summary}</p>
         </div>
       </div>
 
-      <div className="h-[1px] bg-black/15 dark:bg-white/15 mb-4" />
+      <div className="h-[1px] bg-black/15 dark:bg-white/15 mb-3 sm:mb-4" />
 
-      <div className="grid grid-cols-2 gap-2.5 text-[11px] md:text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-2.5 text-[10px] sm:text-[11px] md:text-xs">
         <div>
-          <h5 className="text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Ingredients</h5>
+          <h5 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Ingredients</h5>
           <ul className="space-y-1 text-black/80 dark:text-white/80 leading-snug">
             {recipe.ingredients.map((item) => (
               <li key={item}>{item}</li>
@@ -242,7 +242,7 @@ function RecipePage({ recipe, isTurningFace = false }: { recipe: Recipe; isTurni
           </ul>
         </div>
         <div>
-          <h5 className="text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Instructions</h5>
+          <h5 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] mb-1.5 text-black/80 dark:text-white/80">Instructions</h5>
           <ol className="space-y-1 text-black/80 dark:text-white/80 leading-snug list-decimal list-inside">
             {recipe.instructions.map((item) => (
               <li key={item}>{item}</li>
