@@ -22,7 +22,11 @@ import {
 
 export function Navbar() {
   const pathname = usePathname();
-  const isCheckoutPage = pathname === '/shop' || pathname.startsWith('/manage/') || pathname.startsWith('/track/');
+  const isCheckoutPage =
+    pathname === '/shop' ||
+    pathname.startsWith('/manage/') ||
+    pathname.startsWith('/track/') ||
+    pathname.startsWith('/admin');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
