@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Progress } from "@/components/ui/progress";
 
 interface LoadingScreenProps {
   progress: number;
@@ -29,11 +28,19 @@ export function LoadingScreen({ progress, isLoaded }: LoadingScreenProps) {
           FIZZYO<span className="text-fizzyo-purple">.</span>
         </h1>
       </div>
-      <div className="w-64 space-y-2">
-        <Progress value={progress} className="h-1 bg-white/10" />
-        <p className="text-xs text-center font-mono text-muted-foreground uppercase tracking-widest">
-          Loading {Math.round(progress)}%
-        </p>
+      <div className="flex items-center gap-4" aria-label="Loading">
+        <span
+          className="h-5 w-5 rounded-full bg-fizzyo-blue animate-bounce"
+          style={{ animationDelay: '0ms', animationDuration: '800ms' }}
+        />
+        <span
+          className="h-5 w-5 rounded-full bg-fizzyo-blue animate-bounce"
+          style={{ animationDelay: '140ms', animationDuration: '800ms' }}
+        />
+        <span
+          className="h-5 w-5 rounded-full bg-fizzyo-blue animate-bounce"
+          style={{ animationDelay: '280ms', animationDuration: '800ms' }}
+        />
       </div>
     </div>
   );
