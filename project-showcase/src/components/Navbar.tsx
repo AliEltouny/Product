@@ -26,6 +26,7 @@ export function Navbar() {
     pathname === '/shop' ||
     pathname.startsWith('/manage/') ||
     pathname.startsWith('/track/') ||
+    pathname.startsWith('/rate/') ||
     pathname.startsWith('/admin');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
