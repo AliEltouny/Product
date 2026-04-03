@@ -19,6 +19,7 @@ import {
   removeCartItem,
   type CartItem,
 } from '@/lib/cart';
+import { BrandLogo } from '@/components/BrandLogo';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -78,11 +79,7 @@ export function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navClassName}`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link href="/" className="text-2xl font-bold tracking-tighter font-headline">
-            FIZZYO<span className="text-fizzyo-purple">.</span>
-          </Link>
-        </div>
+        <BrandLogo compact />
 
         <div className="hidden lg:flex items-center gap-8">
           {!isCheckoutPage && navLinks.map((link) => (
