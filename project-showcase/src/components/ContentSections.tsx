@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BrandLogo } from '@/components/BrandLogo';
 import { SodaCookbook } from '@/components/SodaCookbook';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -367,7 +366,7 @@ export function ContentSections() {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-24">
             <div className="col-span-1 md:col-span-1">
-              <BrandLogo className="mb-6 text-2xl" />
+              <h2 className="text-3xl font-bold font-headline tracking-tighter mb-6 uppercase">FIZZYO.</h2>
               <p className="text-white/60 text-sm leading-relaxed uppercase tracking-widest">
                 Modern functional soda for a <br /> better state of mind.
               </p>

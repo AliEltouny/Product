@@ -19,7 +19,8 @@ import {
   removeCartItem,
   type CartItem,
 } from '@/lib/cart';
-import { BrandLogo } from '@/components/BrandLogo';
+
+const CHERRY_CAN_IMAGE = 'https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/Cherry%201.png?v=4';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -79,7 +80,18 @@ export function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navClassName}`}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
-        <BrandLogo compact />
+        <div className="flex items-center gap-2">
+          <Link href="/" className="group flex items-center gap-3">
+            <img
+              src={CHERRY_CAN_IMAGE}
+              alt="Cherry soda can"
+              className="h-12 w-12 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-105"
+            />
+            <span className="text-2xl font-bold tracking-tighter font-headline">
+              FIZZYO<span className="text-fizzyo-purple">.</span>
+            </span>
+          </Link>
+        </div>
 
         <div className="hidden lg:flex items-center gap-8">
           {!isCheckoutPage && navLinks.map((link) => (
