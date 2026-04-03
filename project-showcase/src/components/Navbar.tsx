@@ -20,7 +20,7 @@ import {
   type CartItem,
 } from '@/lib/cart';
 
-const CHERRY_CAN_IMAGE = 'https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/Cherry%201.png?v=4';
+const CHERRY_CAN_LOGO_URL = 'https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/Cherry%201.png?v=4';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -81,11 +81,11 @@ export function Navbar() {
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Link href="/" className="group flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2">
             <img
-              src={CHERRY_CAN_IMAGE}
-              alt="Cherry soda can"
-              className="h-12 w-12 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-transform duration-300 group-hover:scale-105"
+              src={CHERRY_CAN_LOGO_URL}
+              alt="Fizzyo Cherry Soda can"
+              className="h-11 w-11 object-contain"
             />
             <span className="text-2xl font-bold tracking-tighter font-headline">
               FIZZYO<span className="text-fizzyo-purple">.</span>

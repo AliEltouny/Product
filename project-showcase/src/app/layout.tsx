@@ -4,6 +4,11 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Fizzyo Flow | Premium Functional Soda',
   description: 'A modern functional soda brand inspired by classic flavors but made with better ingredients.',
+  icons: {
+    icon: 'https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/Cherry%201.png?v=4',
+    shortcut: 'https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/Cherry%201.png?v=4',
+    apple: 'https://braszseedmeagubxkkyp.supabase.co/storage/v1/object/public/Products/Cherry%201.png?v=4',
+  },
 };
 
 export default function RootLayout({
